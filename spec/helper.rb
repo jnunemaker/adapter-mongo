@@ -22,7 +22,8 @@ shared_examples_for "a mongo adapter" do
   Adapter::Spec::Types.each do |type, (key, key2)|
     it "writes Object values to keys that are #{type}s like a Hash" do
       adapter[key] = {:foo => :bar}
-      adapter[key].should == {'foo' => :bar} # mongo can serialize symbol values
+      # mongo knows hashes and can serialize symbol values
+      adapter[key].should == {'_id' => 'key', 'foo' => :bar}
     end
   end
 end
