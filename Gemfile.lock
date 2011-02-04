@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    adapter-mongo (0.5)
+    adapter-mongo (0.5.1)
       adapter (~> 0.5.1)
       mongo (~> 1.2.0)
 
