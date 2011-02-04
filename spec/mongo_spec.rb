@@ -24,4 +24,29 @@ describe "Mongo adapter" do
     adapter.write('foo', 'steak' => 'bacon')
     client.find_one('_id' => 'foo').should == {'_id' => 'foo', 'steak' => 'bacon'}
   end
+
+  describe "with safe option" do
+    before do
+      client.ensure_index([['email', 1]], :unique => true)
+      @adapter = Adapter[:mongo].new(@client, :safe => true)
+    end
+
+    after do
+      client.drop_index('email_1')
+    end
+
+    it "does not raise operation failure on write if operation succeeds" do
+      adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+      lambda {
+        adapter.write(BSON::ObjectId.new, {'email' => 'steve@orderedlist.com'})
+      }.should_not raise_error(Mongo::OperationFailure)
+    end
+
+    it "raises operation failure on write if operation fails" do
+      adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+      lambda {
+        adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+      }.should raise_error(Mongo::OperationFailure)
+    end
+  end
 end

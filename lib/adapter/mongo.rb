@@ -12,11 +12,11 @@ module Adapter
     end
 
     def write(key, value)
-      client.save({'_id' => key_for(key)}.merge(encode(value)))
+      client.save({'_id' => key_for(key)}.merge(encode(value)), {:safe => options[:safe]})
     end
 
     def delete(key)
-      read(key).tap { client.remove('_id' => key_for(key)) }
+      read(key).tap { client.remove({'_id' => key_for(key)}, {:safe => options[:safe]}) }
     end
 
     def clear
