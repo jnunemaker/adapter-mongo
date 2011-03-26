@@ -3,7 +3,7 @@ require 'adapter/mongo'
 
 describe "Mongo adapter" do
   before do
-    @client = Mongo::Connection.new.db('adapter')['testing']
+    @client = Mongo::Connection.new.db('test')['test']
     @adapter = Adapter[:mongo].new(@client)
     @adapter.clear
   end
