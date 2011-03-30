@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency 'adapter', '~> 0.5.1'
-  s.add_dependency 'mongo', '~> 1.2.0'
+  s.add_dependency 'mongo', '~> 1.3.0.rc0'
 end
