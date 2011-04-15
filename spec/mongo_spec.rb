@@ -1,5 +1,4 @@
 require 'helper'
-require 'adapter/mongo'
 
 describe "Mongo adapter" do
   before do

@@ -16,6 +16,8 @@ log_path.mkpath
 require 'adapter/spec/an_adapter'
 require 'adapter/spec/types'
 
+require 'adapter-mongo'
+
 shared_examples_for "a mongo adapter" do
   it_should_behave_like 'an adapter'
 
