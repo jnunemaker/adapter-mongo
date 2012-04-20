@@ -1,28 +1,30 @@
-= adapter-mongo
+# adapter-mongo
 
 Mongo adapter for adapter gem.
 
-    require 'adapter/mongo'
+```ruby
+require 'adapter/mongo'
 
-    client  = Mongo::Connection.new.db('adapter')['testing']
-    adapter = Adapter[:mongo].new(client)
-    adapter.clear
+client  = Mongo::Connection.new.db('adapter')['testing']
+adapter = Adapter[:mongo].new(client)
+adapter.clear
 
-    adapter.write('foo', 'bar')
-    puts 'Should be bar: ' + adapter.read('foo').inspect
+adapter.write('foo', 'bar')
+puts 'Should be bar: ' + adapter.read('foo').inspect
 
-    adapter.delete('foo')
-    puts 'Should be nil: ' + adapter.read('foo').inspect
+adapter.delete('foo')
+puts 'Should be nil: ' + adapter.read('foo').inspect
 
-    adapter.write('foo', 'bar')
-    adapter.clear
-    puts 'Should be nil: ' + adapter.read('foo').inspect
+adapter.write('foo', 'bar')
+adapter.clear
+puts 'Should be nil: ' + adapter.read('foo').inspect
 
-    puts 'Should be bar: ' + adapter.fetch('foo', 'bar')
+puts 'Should be bar: ' + adapter.fetch('foo', 'bar')
+```
 
 See examples/ or specs/ for more usage.
 
-== Note on Patches/Pull Requests
+## Contributing
 
 * Fork the project.
 * Make your feature addition or bug fix.
