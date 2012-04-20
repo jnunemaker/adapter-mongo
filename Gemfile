@@ -9,8 +9,4 @@ group(:development) do
   gem 'i18n',           '0.5.0'
   gem 'activesupport',  '~> 3', :require => 'active_support'
   gem 'bson_ext', :require => false
-  gem 'SystemTimer', :platform => :ruby_18
-
-  gem 'ruby-debug', :platform => :ruby_18
-  gem 'ruby-debug19', :platform => :ruby_19, :require => 'ruby-debug'
 end
