@@ -3,7 +3,7 @@ $:.unshift(File.expand_path('../../lib', __FILE__))
 require 'rubygems'
 require 'bundler'
 
-Bundler.require(:default, :development)
+Bundler.require(:default, :test)
 
 require 'pathname'
 require 'logger'
@@ -33,6 +33,6 @@ end
 logger = Logger.new(log_path.join('test.log'))
 LogBuddy.init(:logger => logger)
 
-Rspec.configure do |c|
+RSpec.configure do |c|
 
 end
