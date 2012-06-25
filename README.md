@@ -24,7 +24,7 @@ puts 'Should be bar: ' + adapter.fetch('foo', 'bar')
 
 ## Flavors
 
-There are two adapters included with this gem -- `:mongo` and `:mongo_atomic`. `:mongo` assumes that you are writing the full document each time. `:mongo_atomic` allows for partially updating documents. The difference is best show with a bit of code if you are unfamiliar.
+There are two adapters included with this gem -- `:mongo` and `:mongo_atomic`. `:mongo` assumes that you are writing the full document each time. `:mongo_atomic` allows for partially updating documents. The difference is best shown with a bit of code.
 
 ```ruby
 require 'adapter/mongo_atomic'
