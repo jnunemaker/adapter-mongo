@@ -7,16 +7,30 @@ $:.unshift(lib_path)
 
 require 'adapter/mongo_atomic'
 
-client  = Mongo::Connection.new.db('adapter')['testing']
-adapter = Adapter[:mongo_atomic].new(client)
+key            = BSON::ObjectId.new
+full_doc       = {'a' => 'c', 'b' => 'd'}
+partial_doc    = {'a' => 'z'}
+client         = Mongo::Connection.new.db('adapter')['testing']
+adapter        = Adapter[:mongo].new(client)
+atomic_adapter = Adapter[:mongo_atomic].new(client)
+
 adapter.clear
+atomic_adapter.clear
 
-oid = BSON::ObjectId.new
+adapter.write(key, full_doc)
+adapter.write(key, partial_doc)
 
-adapter.write(oid, {'a' => 'c', 'b' => 'd'})
-adapter.write(oid, {'a' => 'z'})
+doc = adapter.read(key)
+doc.delete('_id')
 
-doc = adapter.read(oid)
+# full doc must always be written with :mongo adapter
+puts 'Should be {"a"=>"z"}: ' + doc.inspect
 
-puts 'Should be "z": ' + doc['a']
-puts 'Should be "d": ' + doc['b']
+atomic_adapter.write(key, full_doc)
+atomic_adapter.write(key, partial_doc)
+
+doc = atomic_adapter.read(key)
+doc.delete('_id')
+
+# partial updates can be written with atomic adapter as $set is used
+puts 'Should be {"a"=>"z", "b"=>"d"}: ' + doc.inspect
