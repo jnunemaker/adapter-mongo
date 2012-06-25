@@ -24,7 +24,12 @@ module Adapter
     end
 
     def key_for(key)
-      key.is_a?(BSON::ObjectId) ? key : super
+      case key
+      when BSON::ObjectId, Hash
+        key
+      else
+        super
+      end
     end
 
     def encode(value)

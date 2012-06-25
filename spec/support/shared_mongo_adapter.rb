@@ -16,6 +16,20 @@ shared_examples_for "a mongo adapter" do
     adapter.read(id).should == 'ham'
   end
 
+  it "allows using ordered hashes as keys" do
+    key = BSON::OrderedHash['d', 1, 'n', 1]
+    adapter.write(key, 'ham')
+    client.find_one('_id' => key).should_not be_nil
+    adapter.read(key).should == 'ham'
+  end
+
+  it "allows using hashes as keys" do
+    key = {:d => 1}
+    adapter.write(key, 'ham')
+    client.find_one('_id' => key).should_not be_nil
+    adapter.read(key).should == 'ham'
+  end
+
   it "stores hashes right in document" do
     adapter.write('foo', 'steak' => 'bacon')
     client.find_one('_id' => 'foo').should == {'_id' => 'foo', 'steak' => 'bacon'}
