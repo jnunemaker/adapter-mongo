@@ -7,7 +7,6 @@ require 'bundler'
 Bundler.require(:default, :test)
 
 require 'adapter/spec/an_adapter'
-require 'adapter/spec/types'
 require 'adapter-mongo'
 
 require 'support/shared_mongo_adapter'

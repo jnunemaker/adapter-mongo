@@ -3,8 +3,6 @@ require 'mongo'
 
 module Adapter
   module Mongo
-    NonHashValueKeyName = '_value'
-
     def read(key)
       if doc = client.find_one('_id' => key_for(key))
         decode(doc)
@@ -23,22 +21,9 @@ module Adapter
       client.remove
     end
 
-    def key_for(key)
-      case key
-      when BSON::ObjectId, Hash
-        key
-      else
-        super
-      end
-    end
-
-    def encode(value)
-      value.is_a?(Hash) ? value : {NonHashValueKeyName => value}
-    end
-
     def decode(value)
-      return if value.nil?
-      value.key?(NonHashValueKeyName) ? value[NonHashValueKeyName] : value
+      value.delete('_id')
+      value
     end
   end
 end

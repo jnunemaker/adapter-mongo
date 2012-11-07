@@ -19,7 +19,6 @@ describe "Mongo atomic adapter" do
     adapter.write(oid, {'a' => 'c', 'b' => 'd'})
     adapter.write(oid, {'a' => 'z'})
     adapter.read(oid).should eq({
-      '_id' => oid,
       'a' => 'z',
       'b' => 'd',
     })

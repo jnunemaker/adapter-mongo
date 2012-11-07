@@ -1,33 +1,28 @@
 shared_examples_for "a mongo adapter" do
   it_should_behave_like 'an adapter'
 
-  Adapter::Spec::Types.each do |type, (key, key2)|
-    it "writes Object values to keys that are #{type}s like a Hash" do
-      adapter[key] = {:foo => :bar}
-      # mongo knows hashes and can serialize symbol values
-      adapter[key].should == {'_id' => 'key', 'foo' => :bar}
-    end
-  end
-
   it "allows using object id's as keys in correct type" do
     id = BSON::ObjectId.new
-    adapter.write(id, 'ham')
+    attributes = {'one' => 'two'}
+    adapter.write(id, attributes)
     client.find_one('_id' => id).should_not be_nil
-    adapter.read(id).should == 'ham'
+    adapter.read(id).should == attributes
   end
 
   it "allows using ordered hashes as keys" do
     key = BSON::OrderedHash['d', 1, 'n', 1]
-    adapter.write(key, 'ham')
+    attributes = {'one' => 'two'}
+    adapter.write(key, attributes)
     client.find_one('_id' => key).should_not be_nil
-    adapter.read(key).should == 'ham'
+    adapter.read(key).should == attributes
   end
 
   it "allows using hashes as keys" do
     key = {:d => 1}
-    adapter.write(key, 'ham')
+    attributes = {'one' => 'two'}
+    adapter.write(key, attributes)
     client.find_one('_id' => key).should_not be_nil
-    adapter.read(key).should == 'ham'
+    adapter.read(key).should == attributes
   end
 
   it "stores hashes right in document" do
