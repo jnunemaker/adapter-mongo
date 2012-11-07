@@ -12,10 +12,9 @@ module Adapter
     def read_multiple(*keys)
       ids = keys.map { |key| key_for(key) }
       docs = client.find('_id' => {'$in' => ids}).to_a
+      keys_and_values = docs.map { |doc| [doc.delete('_id'), doc] }
 
-      docs_by_id = BSON::OrderedHash[docs.map { |doc|
-        [doc.delete('_id'), doc]
-      }]
+      docs_by_id = Hash[keys_and_values]
 
       result = {}
       keys.each do |key|
