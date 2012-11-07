@@ -9,6 +9,22 @@ module Adapter
       end
     end
 
+    def read_multiple(*keys)
+      ids = keys.map { |key| key_for(key) }
+      docs = client.find('_id' => {'$in' => ids}).to_a
+
+      docs_by_id = BSON::OrderedHash[docs.map { |doc|
+        [doc.delete('_id'), doc]
+      }]
+
+      result = {}
+      keys.each do |key|
+        key = key_for(key)
+        result[key] = docs_by_id[key]
+      end
+      result
+    end
+
     def write(key, value)
       client.save({'_id' => key_for(key)}.merge(encode(value)), {:safe => options[:safe]})
     end
