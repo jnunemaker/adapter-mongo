@@ -5,21 +5,22 @@ Mongo adapter for adapter gem.
 ```ruby
 require 'adapter/mongo'
 
-client  = Mongo::Connection.new.db('adapter')['testing']
+key     = BSON::ObjectId.new
+client  = Mongo::MongoClient.new.db('adapter')['testing']
 adapter = Adapter[:mongo].new(client)
 adapter.clear
 
-adapter.write('foo', 'bar')
-puts 'Should be bar: ' + adapter.read('foo').inspect
+adapter.write(key, {'some' => 'thing'})
+puts 'Should be {"some" => "thing"}: ' + adapter.read(key).inspect
 
-adapter.delete('foo')
-puts 'Should be nil: ' + adapter.read('foo').inspect
+adapter.delete(key)
+puts 'Should be nil: ' + adapter.read(key).inspect
 
-adapter.write('foo', 'bar')
+adapter.write(key, {'some' => 'thing'})
 adapter.clear
-puts 'Should be nil: ' + adapter.read('foo').inspect
+puts 'Should be nil: ' + adapter.read(key).inspect
 
-puts 'Should be bar: ' + adapter.fetch('foo', 'bar')
+puts 'Should be {"some" => "thing"}: ' + adapter.fetch(key, {'some' => 'thing'}).inspect
 ```
 
 ## Flavors
@@ -32,7 +33,7 @@ require 'adapter/mongo_atomic'
 key            = BSON::ObjectId.new
 full_doc       = {'a' => 'c', 'b' => 'd'}
 partial_doc    = {'a' => 'z'}
-client         = Mongo::Connection.new.db('adapter')['testing']
+client         = Mongo::MongoClient.new.db('adapter')['testing']
 adapter        = Adapter[:mongo].new(client)
 atomic_adapter = Adapter[:mongo_atomic].new(client)
 

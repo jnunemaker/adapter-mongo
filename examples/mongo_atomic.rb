@@ -10,7 +10,7 @@ require 'adapter/mongo_atomic'
 key            = BSON::ObjectId.new
 full_doc       = {'a' => 'c', 'b' => 'd'}
 partial_doc    = {'a' => 'z'}
-client         = Mongo::Connection.new.db('adapter')['testing']
+client         = Mongo::MongoClient.new.db('adapter')['testing']
 adapter        = Adapter[:mongo].new(client)
 atomic_adapter = Adapter[:mongo_atomic].new(client)
 
