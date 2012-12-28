@@ -19,5 +19,4 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'adapter', '0.7.0'
   s.add_dependency 'mongo', '~> 1.8'
-  s.add_dependency 'bson_ext', '~> 1.8'
 end
