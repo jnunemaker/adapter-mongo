@@ -1,9 +1,11 @@
 require 'adapter/mongo'
 
 Adapter.define(:mongo_atomic, Adapter::Mongo) do
-  def write(key, value)
-    criteria = {:_id => key_for(key)}
-    updates  = {'$set' => encode(value)}
-    client.update(criteria, updates, :upsert => true, :safe => options[:safe])
+  # Public
+  def write(key, attributes, options = nil)
+    criteria = {:_id => key}
+    updates = {'$set' => attributes}
+    options = operation_options(options).merge(:upsert => true)
+    client.update(criteria, updates, options)
   end
 end

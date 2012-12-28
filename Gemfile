@@ -1,18 +1,14 @@
 source "http://rubygems.org"
 gemspec
 
-gem 'rake', '~> 0.9.0'
-
-gem 'mongo', '~> 1.6'
-gem 'bson_ext', '~> 1.6', :require => false
+gem 'rake'
 
 group(:test) do
-  gem 'rspec', '~> 2.8'
+  gem 'rspec'
 end
 
 group(:guard) do
-  gem 'guard',          '~> 1.0.0'
-  gem 'guard-rspec',    '~> 0.6.0'
-  gem 'guard-bundler',  '~> 0.1.0'
-  gem 'growl',          '~> 1.0.0'
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'guard-bundler'
 end

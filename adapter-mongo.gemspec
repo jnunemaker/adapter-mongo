@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency 'adapter', '~> 0.6.1'
-  s.add_dependency 'mongo', '~> 1.5'
+  s.add_dependency 'adapter', '0.7.0'
+  s.add_dependency 'mongo', '~> 1.8'
+  s.add_dependency 'bson_ext', '~> 1.8'
 end

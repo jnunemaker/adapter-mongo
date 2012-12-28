@@ -3,14 +3,17 @@ require 'mongo'
 
 module Adapter
   module Mongo
-    def read(key)
-      if doc = client.find_one('_id' => key_for(key))
-        decode(doc)
+
+    # Public
+    def read(key, options = nil)
+      if doc = client.find_one('_id' => key)
+        clean(doc)
       end
     end
 
-    def read_multiple(*keys)
-      ids = keys.map { |key| key_for(key) }
+    # Public
+    def read_multiple(keys, options = nil)
+      ids = keys.map { |key| key }
       docs = client.find('_id' => {'$in' => ids}).to_a
       keys_and_values = docs.map { |doc| [doc.delete('_id'), doc] }
 
@@ -18,27 +21,52 @@ module Adapter
 
       result = {}
       keys.each do |key|
-        key = key_for(key)
+        key = key
         result[key] = docs_by_id[key]
       end
       result
     end
 
-    def write(key, value)
-      client.save({'_id' => key_for(key)}.merge(encode(value)), {:safe => options[:safe]})
+    # Public
+    def write(key, attributes, options = nil)
+      options = operation_options(options)
+      client.save(attributes.merge('_id' => key), options)
     end
 
-    def delete(key)
-      read(key).tap { client.remove({'_id' => key_for(key)}, {:safe => options[:safe]}) }
+    # Public
+    def delete(key, options = nil)
+      options = operation_options(options)
+      client.remove({:_id => key}, options)
     end
 
-    def clear
-      client.remove
+    # Public
+    def clear(options = nil)
+      options = operation_options(options)
+      client.remove({}, options)
     end
 
-    def decode(value)
-      value.delete('_id')
-      value
+    # Private
+    def clean(doc)
+      doc.delete('_id')
+      doc
+    end
+
+    # Private
+    def operation_options(options)
+      write_concern.merge(options || {})
+    end
+
+    # Private
+    def write_concern
+      if options[:write_concern]
+        options[:write_concern]
+      else
+        if options[:safe]
+          {:w => 1}
+        else
+          {:w => 0}
+        end
+      end
     end
   end
 end

@@ -2,7 +2,7 @@ require 'helper'
 
 describe "Mongo atomic adapter" do
   before do
-    @client = Mongo::Connection.new.db('test')['test']
+    @client = Mongo::MongoClient.new.db('test')['test']
     @adapter = Adapter[adapter_name].new(@client)
     @adapter.clear
   end

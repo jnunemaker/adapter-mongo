@@ -31,9 +31,61 @@ shared_examples_for "a mongo adapter" do
   end
 
   describe "with safe option" do
+    context "set to true" do
+      before do
+        client.ensure_index([['email', 1]], :unique => true)
+        @adapter = Adapter[adapter_name].new(client, :safe => true)
+      end
+
+      after do
+        client.drop_index('email_1')
+      end
+
+      it "does not raise operation failure on write if operation succeeds" do
+        adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+        lambda {
+          adapter.write(BSON::ObjectId.new, {'email' => 'steve@orderedlist.com'})
+        }.should_not raise_error(Mongo::OperationFailure)
+      end
+
+      it "raises operation failure on write if operation fails" do
+        adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+        lambda {
+          adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+        }.should raise_error(Mongo::OperationFailure)
+      end
+    end
+
+    context "set to false" do
+      before do
+        client.ensure_index([['email', 1]], :unique => true)
+        @adapter = Adapter[adapter_name].new(client, :safe => false)
+      end
+
+      after do
+        client.drop_index('email_1')
+      end
+
+      it "does not raise operation failure on write if operation succeeds" do
+        adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+        lambda {
+          adapter.write(BSON::ObjectId.new, {'email' => 'steve@orderedlist.com'})
+        }.should_not raise_error(Mongo::OperationFailure)
+      end
+
+      it "does not raise operation failure on write if operation fails" do
+        adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+        lambda {
+          adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
+        }.should_not raise_error(Mongo::OperationFailure)
+      end
+    end
+  end
+
+  describe "with :write_concern" do
     before do
       client.ensure_index([['email', 1]], :unique => true)
-      @adapter = Adapter[adapter_name].new(client, :safe => true)
+      @adapter = Adapter[adapter_name].new(client, :write_concern => {:w => 1})
     end
 
     after do
@@ -52,6 +104,41 @@ shared_examples_for "a mongo adapter" do
       lambda {
         adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
       }.should raise_error(Mongo::OperationFailure)
+    end
+
+    it "allows overriding write concern for write" do
+      id = BSON::ObjectId.new
+      client.should_receive(:update).
+        with(
+          hash_including(:_id),
+          kind_of(Hash),
+          hash_including(:w => 0)
+        )
+      adapter.write(id, {:foo => 'bar'}, :w => 0)
+    end
+
+    it "uses write concern for delete" do
+      id = BSON::ObjectId.new
+      client.should_receive(:remove).with({:_id => id}, :w => 1)
+      adapter.delete(id)
+    end
+
+    it "allows overriding write concern for delete" do
+      id = BSON::ObjectId.new
+      client.should_receive(:remove).with({:_id => id}, :w => 0)
+      adapter.delete(id, :w => 0)
+    end
+
+    it "uses write concern for clear" do
+      id = BSON::ObjectId.new
+      client.should_receive(:remove).with({}, :w => 1)
+      adapter.clear
+    end
+
+    it "allows overriding write concern for clear" do
+      id = BSON::ObjectId.new
+      client.should_receive(:remove).with({}, :w => 0)
+      adapter.clear(:w => 0)
     end
   end
 end
