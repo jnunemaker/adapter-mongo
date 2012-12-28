@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Adapter-mongo by jnunemaker</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Adapter-mongo</h1>
+        <p>Adapter for mongo</p>
+
+        <p class="view"><a href="https://github.com/jnunemaker/adapter-mongo">View the Project on GitHub <small>jnunemaker/adapter-mongo</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/jnunemaker/adapter-mongo/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/jnunemaker/adapter-mongo/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/jnunemaker/adapter-mongo">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>adapter-mongo</h1>
+
+<p>Mongo adapter for adapter gem.</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">'adapter/mongo'</span>
+
+<span class="n">key</span>     <span class="o">=</span> <span class="no">BSON</span><span class="o">::</span><span class="no">ObjectId</span><span class="o">.</span><span class="n">new</span>
+<span class="n">client</span>  <span class="o">=</span> <span class="no">Mongo</span><span class="o">::</span><span class="no">MongoClient</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">db</span><span class="p">(</span><span class="s1">'adapter'</span><span class="p">)</span><span class="o">[</span><span class="s1">'testing'</span><span class="o">]</span>
+<span class="n">adapter</span> <span class="o">=</span> <span class="no">Adapter</span><span class="o">[</span><span class="ss">:mongo</span><span class="o">].</span><span class="n">new</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+<span class="n">adapter</span><span class="o">.</span><span class="n">clear</span>
+
+<span class="n">adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="s1">'some'</span> <span class="o">=&gt;</span> <span class="s1">'thing'</span><span class="p">})</span>
+<span class="nb">puts</span> <span class="s1">'Should be {"some" =&gt; "thing"}: '</span> <span class="o">+</span> <span class="n">adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">inspect</span>
+
+<span class="n">adapter</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="s1">'Should be nil: '</span> <span class="o">+</span> <span class="n">adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">inspect</span>
+
+<span class="n">adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="s1">'some'</span> <span class="o">=&gt;</span> <span class="s1">'thing'</span><span class="p">})</span>
+<span class="n">adapter</span><span class="o">.</span><span class="n">clear</span>
+<span class="nb">puts</span> <span class="s1">'Should be nil: '</span> <span class="o">+</span> <span class="n">adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">inspect</span>
+
+<span class="nb">puts</span> <span class="s1">'Should be {"some" =&gt; "thing"}: '</span> <span class="o">+</span> <span class="n">adapter</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{</span><span class="s1">'some'</span> <span class="o">=&gt;</span> <span class="s1">'thing'</span><span class="p">})</span><span class="o">.</span><span class="n">inspect</span>
+</pre></div>
+
+<h2>Flavors</h2>
+
+<p>There are two adapters included with this gem -- <code>:mongo</code> and <code>:mongo_atomic</code>. <code>:mongo</code> assumes that you are writing the full document each time. <code>:mongo_atomic</code> allows for partially updating documents. The difference is best shown with a bit of code.</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s1">'adapter/mongo_atomic'</span>
+
+<span class="n">key</span>            <span class="o">=</span> <span class="no">BSON</span><span class="o">::</span><span class="no">ObjectId</span><span class="o">.</span><span class="n">new</span>
+<span class="n">full_doc</span>       <span class="o">=</span> <span class="p">{</span><span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="s1">'c'</span><span class="p">,</span> <span class="s1">'b'</span> <span class="o">=&gt;</span> <span class="s1">'d'</span><span class="p">}</span>
+<span class="n">partial_doc</span>    <span class="o">=</span> <span class="p">{</span><span class="s1">'a'</span> <span class="o">=&gt;</span> <span class="s1">'z'</span><span class="p">}</span>
+<span class="n">client</span>         <span class="o">=</span> <span class="no">Mongo</span><span class="o">::</span><span class="no">MongoClient</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">db</span><span class="p">(</span><span class="s1">'adapter'</span><span class="p">)</span><span class="o">[</span><span class="s1">'testing'</span><span class="o">]</span>
+<span class="n">adapter</span>        <span class="o">=</span> <span class="no">Adapter</span><span class="o">[</span><span class="ss">:mongo</span><span class="o">].</span><span class="n">new</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+<span class="n">atomic_adapter</span> <span class="o">=</span> <span class="no">Adapter</span><span class="o">[</span><span class="ss">:mongo_atomic</span><span class="o">].</span><span class="n">new</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+
+<span class="n">adapter</span><span class="o">.</span><span class="n">clear</span>
+<span class="n">atomic_adapter</span><span class="o">.</span><span class="n">clear</span>
+
+<span class="n">adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">full_doc</span><span class="p">)</span>
+<span class="n">adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">partial_doc</span><span class="p">)</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">'_id'</span><span class="p">)</span>
+
+<span class="c1"># full doc must always be written with :mongo adapter</span>
+<span class="nb">puts</span> <span class="s1">'Should be {"a"=&gt;"z"}: '</span> <span class="o">+</span> <span class="n">doc</span><span class="o">.</span><span class="n">inspect</span>
+
+<span class="n">atomic_adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">full_doc</span><span class="p">)</span>
+<span class="n">atomic_adapter</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">partial_doc</span><span class="p">)</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">atomic_adapter</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">'_id'</span><span class="p">)</span>
+
+<span class="c1"># partial updates can be written with atomic adapter as $set is used</span>
+<span class="nb">puts</span> <span class="s1">'Should be {"a"=&gt;"z", "b"=&gt;"d"}: '</span> <span class="o">+</span> <span class="n">doc</span><span class="o">.</span><span class="n">inspect</span>
+</pre></div>
+
+<p>See examples/ or specs/ for more usage.</p>
+
+<h2>Contributing</h2>
+
+<ul>
+<li>Fork the project.</li>
+<li>Make your feature addition or bug fix.</li>
+<li>Add tests for it. This is important so we don't break it in a future version unintentionally.</li>
+<li>Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine, but bump version in a commit by itself so we can ignore when we pull)</li>
+<li>Send us a pull request. Bonus points for topic branches.</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/jnunemaker">jnunemaker</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
