@@ -45,7 +45,7 @@ shared_examples_for "a mongo adapter" do
         adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
         expect {
           adapter.write(BSON::ObjectId.new, {'email' => 'steve@orderedlist.com'})
-        }.not_to raise_error(Mongo::OperationFailure)
+        }.not_to raise_error
       end
 
       it "raises operation failure on write if operation fails" do
@@ -70,14 +70,14 @@ shared_examples_for "a mongo adapter" do
         adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
         expect {
           adapter.write(BSON::ObjectId.new, {'email' => 'steve@orderedlist.com'})
-        }.not_to raise_error(Mongo::OperationFailure)
+        }.not_to raise_error
       end
 
       it "does not raise operation failure on write if operation fails" do
         adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
         expect {
           adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
-        }.not_to raise_error(Mongo::OperationFailure)
+        }.not_to raise_error
       end
     end
   end
@@ -96,7 +96,7 @@ shared_examples_for "a mongo adapter" do
       adapter.write(BSON::ObjectId.new, {'email' => 'john@orderedlist.com'})
       expect {
         adapter.write(BSON::ObjectId.new, {'email' => 'steve@orderedlist.com'})
-      }.not_to raise_error(Mongo::OperationFailure)
+      }.not_to raise_error
     end
 
     it "raises operation failure on write if operation fails" do
