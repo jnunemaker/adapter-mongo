@@ -5,7 +5,7 @@ gem 'rake'
 gem 'bson_ext', '~> 1.8'
 
 group(:test) do
-  gem 'rspec'
+  gem 'rspec', '~> 3.4.0'
 end
 
 group(:guard) do

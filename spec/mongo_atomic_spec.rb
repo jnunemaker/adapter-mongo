@@ -18,7 +18,7 @@ describe "Mongo atomic adapter" do
     oid = BSON::ObjectId.new
     adapter.write(oid, {'a' => 'c', 'b' => 'd'})
     adapter.write(oid, {'a' => 'z'})
-    adapter.read(oid).should eq({
+    expect(adapter.read(oid)).to eq({
       'a' => 'z',
       'b' => 'd',
     })
